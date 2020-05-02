@@ -11,6 +11,7 @@
 					:action="$http.defaults.baseURL + '/upload'"
 					:show-file-list="false"
 					:on-success="handleAvatarSuccess"
+					:headers="getAuthrization()"
 					:before-upload="beforeAvatarUpload">
 					<img v-if="form.url" :src="form.url" class="avatar">
 					<i v-else class="el-icon-plus avatar-uploader-icon"></i>

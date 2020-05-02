@@ -73,7 +73,36 @@
 						<el-input v-model="form.teamTips" placeholder="" type="textarea"></el-input>
 					</el-form-item>
 				</el-tab-pane>
-				<el-tab-pane label="技能信息" name="skills"></el-tab-pane>
+				<el-tab-pane label="技能信息" name="skills">
+					<el-button type="text" @click="form.skills.push({})"><i class="el-icon-plus"></i>新增</el-button>
+					<el-row type="flex" style="flex-wrap: wrap">
+						<el-col :md="12" v-for="(item, index) in form.skills" :key="index">
+							<el-form-item label="名称">
+								<el-input v-model="item.name" placeholder=""></el-input>
+							</el-form-item>
+							<el-form-item label="图标">
+								<el-upload
+									class="avatar-uploader"
+									:action="$http.defaults.baseURL + '/upload'"
+									:show-file-list="false"
+									:on-success="res => $set(item, 'icon', res.url)"
+									:before-upload="beforeAvatarUpload">
+									<img v-if="item.icon" :src="item.icon" class="avatar">
+									<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+								</el-upload>
+							</el-form-item>
+							<el-form-item label="描述">
+								<el-input v-model="item.description" type="textarea"></el-input>
+							</el-form-item>
+							<el-form-item label="提示">
+								<el-input v-model="item.tips" type="textarea"></el-input>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="danger" size="mini" @click="form.skills.splice(i, 1)">删除</el-button>
+							</el-form-item>
+						</el-col>
+					</el-row>
+				</el-tab-pane>
 			</el-tabs>
 			
 			<el-form-item style="margin-top: 1rem">
@@ -87,13 +116,15 @@
 export default {
 	data() {
 		return {
+			skills: 'skills',
 			form: {
 				scores: {
 					difficult: 0,
 					skills: 0,
 					attack: 0,
 					survive: 0
-				}
+				},
+				skills: []
 			},
 			options: [],
 			categories: '',
@@ -146,17 +177,21 @@ export default {
 			// this.form.url = res.url
 			this.$set(this.form, 'url', res.url)
 		},
+		handleIconSuccess(res) {
+			console.log('res', res)
+			this.$set(this.form.skills)
+		},
 		beforeAvatarUpload(file) {
-			const isJPG = file.type === 'image/jpeg';
+			// const isJPG = file.type === 'image/jpeg' || file.type === 'png' || file.type === 'PNG';
 			const isLt2M = file.size / 1024 / 1024 < 2;
 
-			if (!isJPG) {
-				this.$message.error('上传头像图片只能是 JPG 格式!');
-			}
+			// if (!isJPG) {
+			// 	this.$message.error('上传头像图片只能是 JPG 格式!');
+			// }
 			if (!isLt2M) {
 				this.$message.error('上传头像图片大小不能超过 2MB!');
 			}
-			return isJPG && isLt2M;
+			return isLt2M;
 		},
 	}
 }
@@ -176,14 +211,14 @@ export default {
 .avatar-uploader-icon {
 	font-size: 28px;
 	color: #8c939d;
-	width: 178px;
-	height: 178px;
-	line-height: 178px;
+	width: 128px;
+	height: 128px;
+	line-height: 128px;
 	text-align: center;
 }
 .avatar {
-	width: 178px;
-	height: 178px;
+	width: 128px;
+	height: 128px;
 	display: block;
 }
 </style>
